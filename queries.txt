@@ -1,0 +1,49 @@
+Статус подключения и порт
+:server status
+
+Добавление пользователя
+:server user add
+
+Выбор БД
+:use social
+
+Поисковые запросы разной степени накрученности
+match (p:Person) return p limit 25
+
+MATCH (p:Person) WHERE 45 <= p.PersonAge <=50 and p.PersonResidence = 'Los Angeles' RETURN p
+
+MATCH (p:Person{PersonResidence:'Los Angeles'}) WHERE 45 <= p.PersonAge <= 50 RETURN p
+
+MATCH (p1:Person)-[:LOVES]->(p2:Person)
+WHERE p1.PersonResidence <> p2.PersonResidence and 40 <= p1.PersonAge <= 45 and 20 <= p2.PersonAge <= 25
+RETURN p1, p2;
+
+Создание, выбор, удаление узла
+create (p:Person {PersonID:3001, PersonName:'qwerty'})
+
+match (p:Person{PersonID:3001}) return p
+
+match (p:Person{PersonID:3001}) DELETE p
+
+Создание, выбор, удаление отношения
+match (p1:Person{PersonID:'1'})
+match (p2:Person{PersonID:'2'})
+create (p1)-[rel:OWE_MONEY{Sum:1000}]->(p2)
+
+match (p1:Person) -[:OWE_MONEY] -(p2:Person) return p1, p2
+
+match (p1:Person) -[r:OWE_MONEY] -(p2:Person) delete r
+
+Агрегация
+match (p1:Person) -[rel:KNOWS] - (p2:Person)
+where p1.PersonResidence = 'Chicago' and p2.PersonResidence = 'New York'
+return count(distinct p1.PersonID)
+
+MATCH (p1:Person)-[:LOVES]->(p2:Person)
+WHERE count{(p1)-[:KNOWS{Type:'best friend'}]-(:Person)} > 4
+RETURN p1, p2, count{(p1)-[:KNOWS{Type:'best friend'}]-(:Person)}
+
+ORDER BY, UNION, EXISTS используются как и в SQL....
+
+Статейка про cypher
+https://konstantinklepikov.github.io/myknowlegebase/notes/cypher.html#:~:text=Cypher%20—%20это%20язык%20графовых%20запросов,том%2C%20как%20их%20получить).
